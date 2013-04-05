@@ -1,5 +1,7 @@
 package com.vaadin.tutorial.addressbook;
 
+import java.util.Random;
+
 import com.vaadin.annotations.Title;
 import com.vaadin.data.Container.Filter;
 import com.vaadin.data.Item;
@@ -63,6 +65,12 @@ public class AddressbookUI extends UI {
 		initEditor();
 		initSearch();
 		initAddRemoveButtons();
+
+		// Add IDs for testing
+		contactList.setId("contact-list");
+		searchField.setId("search-field");
+		addNewContactButton.setId("new-contact");
+		removeContactButton.setId("remove-contact");
 	}
 
 	/*
@@ -116,6 +124,9 @@ public class AddressbookUI extends UI {
 		/* User interface can be created dynamically to reflect underlying data. */
 		for (String fieldName : fieldNames) {
 			TextField field = new TextField(fieldName);
+			// JK: Add an ID for testability.
+			// NOTE: always make sure that IDs are properly escaped.
+			field.setId(fieldName.replaceAll("\\s+", "-"));
 			editorLayout.addComponent(field);
 			field.setWidth("100%");
 
@@ -245,7 +256,7 @@ public class AddressbookUI extends UI {
 				if (contactId != null)
 					editorFields.setItemDataSource(contactList
 							.getItem(contactId));
-				
+
 				editorLayout.setVisible(contactId != null);
 			}
 		});
@@ -270,12 +281,15 @@ public class AddressbookUI extends UI {
 		String[] lnames = { "Smith", "Gordon", "Simpson", "Brown", "Clavel",
 				"Simons", "Verne", "Scott", "Allison", "Gates", "Rowling",
 				"Barks", "Ross", "Schneider", "Tate" };
+
+		// JK: Seed the random number generator to ensure testability
+		Random rnd = new Random(1L);
 		for (int i = 0; i < 1000; i++) {
 			Object id = ic.addItem();
 			ic.getContainerProperty(id, FNAME).setValue(
-					fnames[(int) (fnames.length * Math.random())]);
+					fnames[rnd.nextInt(fnames.length)]);
 			ic.getContainerProperty(id, LNAME).setValue(
-					lnames[(int) (lnames.length * Math.random())]);
+					lnames[rnd.nextInt(lnames.length)]);
 		}
 
 		return ic;
